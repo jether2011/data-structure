@@ -27,3 +27,5 @@ hs_err_pid*
 .classpath
 .project
 /target
+/learn-algorithm/target/
+/learn-data-structure/target/
