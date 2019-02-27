@@ -3,30 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jetherrodrigues.linkedlist;
+package com.jetherrodrigues.doublelinkedlist;
 
 import com.jetherrodrigues.domain.Celula;
-import com.jetherrodrigues.domain.Node;
+import com.jetherrodrigues.domain.DoubleNode;
 
 /**
  *
  * @author jether
  */
-public class LinkedList extends Celula<Node>{
+public class DoubleLinkedList extends Celula<DoubleNode>{
     
-    private Node first;
-    private Node last;
+    private DoubleNode first;
+    private DoubleNode last;
     private int totalElements = 0;
 
     @Override
     public void beginAdd(String name) {
-        Node node = Node.of(name, first);
-        this.first = node;
-        
         if (this.totalElements == 0) {
-            this.last = this.first;
+            DoubleNode node = DoubleNode.of(name);
+            this.first = node;
+            this.last = node;
+        } else {
+            DoubleNode node = DoubleNode.of(name, this.first);
+            this.first.previous(node);
+            this.first = node;
         }
-        
         this.totalElements++;
     }
 
@@ -36,8 +38,9 @@ public class LinkedList extends Celula<Node>{
             this.beginAdd(value);
         } 
         else {
-            Node node = Node.of(value, null);
+            DoubleNode node = DoubleNode.of(value);
             this.last.next(node);
+            node.previous(this.last);
             this.last = node;
             this.totalElements++;
         }
@@ -50,18 +53,22 @@ public class LinkedList extends Celula<Node>{
         } else if (position == this.totalElements) {
             this.add(value);
         } else {
-            Node previous = this.get(position -1);
-            Node node = Node.of(value, previous.getNext());
+            DoubleNode previous = this.get(position -1);
+            DoubleNode next = previous.getNext();
+            DoubleNode node = DoubleNode.of(value, previous.getNext());
             previous.next(node);
+            node.previous(previous);
+            previous.next(node);
+            next.previous(node);
             this.totalElements++;
         }        
     }
 
     @Override
-    public Node get(int position) {
+    public DoubleNode get(int position) {
         this.validatePosisition(position);
         
-        Node current = first;        
+        DoubleNode current = first;        
         for (int i = 0; i < position; i++) {
             current = current.getNext();
         }
@@ -81,10 +88,17 @@ public class LinkedList extends Celula<Node>{
     
     @Override
     public void remove(int position) {
-        if (this.isPositionValid(position)) {
-            Node previous = this.get(position - 1);            
-            Node toRemove = this.get(position);
-            previous.next(toRemove.getNext());
+        if(position == 0) {
+            this.remove();
+        } else if (position == this.totalElements - 1) {
+            this.removeInTheEnd();
+        } else {
+            DoubleNode previous = this.get(position - 1);            
+            DoubleNode current = previous.getNext();
+            DoubleNode next = current.getNext();
+            
+            previous.next(next);
+            next.previous(previous);
             this.totalElements--;
         }
     }
@@ -97,7 +111,9 @@ public class LinkedList extends Celula<Node>{
     @Override
     public boolean contains(String value) {        
         boolean contain = false;
-        Node current = first;
+        DoubleNode current = first;
+        
+        if(current.getName().equals(value)) return true; 
         
         while(current != null) {
             if(current.getName().equals(value)) {
@@ -120,22 +136,22 @@ public class LinkedList extends Celula<Node>{
     private boolean isPositionValid(int position) {
         return position > 0 && position < this.totalElements;
     }
+        
+    private void removeInTheEnd() {
+        if (this.totalElements == 1) {
+            this.remove();
+        } else {
+            DoubleNode beforeLast = this.last.getPrevious();
+            beforeLast.next(null);
+            this.last = beforeLast;
+            this.totalElements--;
+        }
+    }
 
     @Override
     public String toString() {
-        if(totalElements == 0) return "[]";
-        
-        Node current = first;
-        
-        StringBuilder builder = new StringBuilder();
-        builder.append("[ ");
-        for (int i = 0; i < this.totalElements; i++) {
-            String name = current == null ? "" : current.getName();
-            builder.append(name).append(",");
-            current = current.getNext();
-        }
-        builder.append(" ]");
-        
-        return builder.toString();
+        return "DoubleLinkedList{" + "first=" + first + ", last=" + last + ", totalElements=" + totalElements + '}';
     }
+
+    
 }
