@@ -16,5 +16,15 @@
 - DFS
 - Tries
 - UnionFind
+- Big O Notation
 
 ## Algorithm
+
+## Books
+
+- https://www.amazon.com/Entendendo-Algoritmos-ilustrado-programadores-Portuguese-ebook/dp/B07B61HC3L?author-follow=B01IDUQZGQ&
+
+## To pratice
+
+- https://leetcode.com/
+- https://www.hackerrank.com/
